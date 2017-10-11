@@ -1,0 +1,9 @@
+diff --git a/epoxy.pc.in b/epoxy.pc.in
+index 7828a77..023df84 100644
+--- a/epoxy.pc.in
++++ b/epoxy.pc.in
+@@ -13,3 +13,4 @@ Version: @PACKAGE_VERSION@
+ Cflags: -I${includedir}
+ Libs: -L${libdir} -lepoxy
+ Libs.private: @DLOPEN_LIBS@
++Requires.private: egl

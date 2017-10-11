@@ -1,0 +1,28 @@
+From f323f69c4f5913474c6d64f2162642ebbbde04b8 Mon Sep 17 00:00:00 2001
+From: Carlos Alberto Lopez Perez <clopez@igalia.com>
+Date: Tue, 10 Oct 2017 19:48:07 +0200
+Subject: [PATCH] Revert "[WPE] Build failure due to invalid cast of
+ EGLNativeWindowType when targetting 64-bit ARM"
+
+This reverts commit 001ab0dfe5c8ad8904e0785cbddce1b354ac7f96.
+---
+ Source/WebKit/WebProcess/WebPage/wpe/AcceleratedSurfaceWPE.cpp | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/Source/WebKit/WebProcess/WebPage/wpe/AcceleratedSurfaceWPE.cpp b/Source/WebKit/WebProcess/WebPage/wpe/AcceleratedSurfaceWPE.cpp
+index 5898e484c83..cbe88dd5a87 100644
+--- a/Source/WebKit/WebProcess/WebPage/wpe/AcceleratedSurfaceWPE.cpp
++++ b/Source/WebKit/WebProcess/WebPage/wpe/AcceleratedSurfaceWPE.cpp
+@@ -75,8 +75,7 @@ void AcceleratedSurfaceWPE::finalize()
+ uint64_t AcceleratedSurfaceWPE::window() const
+ {
+     ASSERT(m_backend);
+-    static_assert(sizeof(EGLNativeWindowType) <= sizeof(uint64_t), "EGLNativeWindowType must not be longer than 64 bits.");
+-    return static_cast<uint64_t>(wpe_renderer_backend_egl_target_get_native_window(m_backend));
++    return reinterpret_cast<uint64_t>(wpe_renderer_backend_egl_target_get_native_window(m_backend));
+ }
+ 
+ uint64_t AcceleratedSurfaceWPE::surfaceID() const
+-- 
+2.11.0
+
