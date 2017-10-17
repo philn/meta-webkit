@@ -1,0 +1,41 @@
+From 24781e059cf07aad514a50c19807e8092fea4cc3 Mon Sep 17 00:00:00 2001
+From: Carlos Alberto Lopez Perez <clopez@igalia.com>
+Date: Tue, 17 Oct 2017 13:48:54 +0200
+Subject: [PATCH] Dont try to guess the path of luajit (cross-build fixes)
+
+ * The variable prefix on the luajit pkg-config file has nothing to
+   do with the path where luajit-native is installed on a cross-build
+   environment.
+
+ * So we should simply call luajit expecting the right program to be
+   on the PATH.
+
+ * Still allow the PATH or name of the luajit program to be overriden
+   at runtime via the environment variable LUAJIT.
+---
+ src/Makefile | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/src/Makefile b/src/Makefile
+index c9fe194..1b82909 100644
+--- a/src/Makefile
++++ b/src/Makefile
+@@ -3,6 +3,7 @@
+ PREFIX ?= /usr/local
+ BINDIR ?= $(PREFIX)/bin
+ LIBDIR ?= $(PREFIX)/lib
++LUAJIT ?= luajit
+ CC ?= gcc
+ 
+ TARGET_MACHINE := $(shell $(CC) -dumpmachine)
+@@ -46,10 +47,6 @@ LUAJIT_LDLIBS := $(shell pkg-config luajit --libs)
+ CFLAGS  += $(LUAJIT_CFLAGS)
+ LDFLAGS += $(LUAJIT_LDLIBS)
+ 
+-ifeq ($(strip $(LUAJIT)),)
+-  LUAJIT := $(shell pkg-config luajit --variable=prefix)/bin/luajit
+-endif
+-
+ all: dyz
+ 
+ dyz: main.o $(LUA_OBJS)
